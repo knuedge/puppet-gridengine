@@ -3,4 +3,10 @@ SGE_CELL=<%= @sgecell %>
 SGE_CLUSTER_NAME=<%= @sgecluster %>
 RLIMIT_MEMLOCKED=unlimited
 
+# Start the queue master daemon? (if installed)
+SGE_START_MASTERD=yes
+
+# Start the execution daemon? (if installed)
+SGE_START_EXECD=yes
+
 export SGE_ROOT SGE_CELL SGE_CLUSTER_NAME RLIMIT_MEMLOCKED

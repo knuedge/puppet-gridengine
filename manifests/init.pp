@@ -34,6 +34,8 @@ class gridengine ($sgeroot, $sgecell, $sgemaster, $sgecluster) {
       mode    => "444",
       require => Package["gridengine", "gridengine-execd"],
     }
+
+    $sge_sysconfig_path = '/etc/sysconfig'
   } else {
     package {
       "gridengine-common": ensure => present;
@@ -49,6 +51,8 @@ class gridengine ($sgeroot, $sgecell, $sgemaster, $sgecluster) {
       mode    => "444",
       require => Package["gridengine-common", "gridengine-exec"],
     }
+
+    $sge_sysconfig_path = '/etc/default'
   }
 
   file {
@@ -59,7 +63,7 @@ class gridengine ($sgeroot, $sgecell, $sgemaster, $sgecluster) {
     "$sgecommon/sge_request":     source  => "$mod_file_path/sge_request";
     "$sgecommon/settings.sh":     source  => "$mod_file_path/settings.sh";
     "$sgecommon/settings.csh":    content => template("gridengine/settings.csh.erb");
-    "/etc/sysconfig/gridengine":  content => template("gridengine/gridengine.erb");
+    "$sge_sysconfig_path/gridengine":  content => template("gridengine/gridengine.erb");
     "/etc/profile.d/sge.sh":      ensure => link, target => "$sgecommon/settings.sh";
     "/etc/profile.d/sge.csh":     ensure => link, target => "$sgecommon/settings.csh";
   }
