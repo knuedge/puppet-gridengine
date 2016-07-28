@@ -6,31 +6,49 @@ class gridengine ($sgeroot, $sgecell, $sgemaster, $sgecluster) {
   $sgecfgdir      = "$sgeroot/$sgecell"
   $sgecommon      = "$sgecfgdir/common"
 
-  yumrepo {
-    "loveshack-SGE":
-      baseurl => "http://copr-be.cloud.fedoraproject.org/results/loveshack/SGE/epel-6-\$basearch/",
-      skip_if_unavailable => true,
-      gpgcheck => false,
-      enabled => true
-  }
 
-  Package {
-    install_options => "--nogpgcheck",
-    require => Yumrepo["loveshack-SGE"],
-  }
+  if $::osfamily == 'RedHat' {
+    yumrepo {
+      "loveshack-SGE":
+        baseurl => "http://copr-be.cloud.fedoraproject.org/results/loveshack/SGE/epel-6-\$basearch/",
+        skip_if_unavailable => true,
+        gpgcheck => false,
+        enabled => true
+    }
 
-  package {
-    "gridengine":         ensure => present;
-    "gridengine-execd":   ensure => present;
-    "gridengine-qmaster": ensure => present;
-    "gridengine-qmon":    ensure => present;
-  }
+    Package {
+      install_options => "--nogpgcheck",
+      require => Yumrepo["loveshack-SGE"],
+    }
 
-  File {
-    owner   => "root",
-    group   => "root",
-    mode    => "444",
-    require => Package["gridengine", "gridengine-execd"],
+    package {
+      "gridengine":         ensure => present;
+      "gridengine-execd":   ensure => present;
+      "gridengine-qmaster": ensure => present;
+      "gridengine-qmon":    ensure => present;
+    }
+
+    File {
+      owner   => "root",
+      group   => "root",
+      mode    => "444",
+      require => Package["gridengine", "gridengine-execd"],
+    }
+  } else {
+    package {
+      "gridengine-common": ensure => present;
+      "gridengine-client": ensure => present;
+      "gridengine-exec":   ensure => present;
+      "gridengine-master": ensure => present;
+      "gridengine-qmon":   ensure => present;
+    }
+
+    File {
+      owner   => "root",
+      group   => "root",
+      mode    => "444",
+      require => Package["gridengine-common", "gridengine-exec"],
+    }
   }
 
   file {
